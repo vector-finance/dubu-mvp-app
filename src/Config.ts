@@ -4,6 +4,7 @@ export default {
     rpc: "https://bsc-dataseed.binance.org",
 
     contracts: {
-        CakePot: "0x70653Dedc64C109780d3B41eFb535333a2AeB7fb",
+        Cake: "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+        CakePot: "0xF43df1bC8DD096F5f9dF1fB4d676D2ab38592020",
     },
 };

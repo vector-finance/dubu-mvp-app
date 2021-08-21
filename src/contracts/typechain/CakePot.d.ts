@@ -23,6 +23,7 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface CakePotInterface extends ethers.utils.Interface {
   functions: {
     "amounts(uint256,address)": FunctionFragment;
+    "checkEnd()": FunctionFragment;
     "currentSeason()": FunctionFragment;
     "end()": FunctionFragment;
     "enter(uint256)": FunctionFragment;
@@ -30,6 +31,7 @@ interface CakePotInterface extends ethers.utils.Interface {
     "exited(uint256,address)": FunctionFragment;
     "maxRCounts(uint256)": FunctionFragment;
     "maxSRCounts(uint256)": FunctionFragment;
+    "maxSSRCounts(uint256)": FunctionFragment;
     "nRewards(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "period()": FunctionFragment;
@@ -41,8 +43,9 @@ interface CakePotInterface extends ethers.utils.Interface {
     "srRewards(uint256)": FunctionFragment;
     "srs(uint256,uint256)": FunctionFragment;
     "ssrRewards(uint256)": FunctionFragment;
-    "ssrs(uint256)": FunctionFragment;
+    "ssrs(uint256,uint256)": FunctionFragment;
     "startSeasonBlock()": FunctionFragment;
+    "totalAmounts(uint256)": FunctionFragment;
     "totalWeights(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "userCounts(uint256)": FunctionFragment;
@@ -53,6 +56,7 @@ interface CakePotInterface extends ethers.utils.Interface {
     functionFragment: "amounts",
     values: [BigNumberish, string]
   ): string;
+  encodeFunctionData(functionFragment: "checkEnd", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "currentSeason",
     values?: undefined
@@ -70,6 +74,10 @@ interface CakePotInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "maxSRCounts",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "maxSSRCounts",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -107,10 +115,17 @@ interface CakePotInterface extends ethers.utils.Interface {
     functionFragment: "ssrRewards",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "ssrs", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "ssrs",
+    values: [BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "startSeasonBlock",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalAmounts",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "totalWeights",
@@ -130,6 +145,7 @@ interface CakePotInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "amounts", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "checkEnd", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "currentSeason",
     data: BytesLike
@@ -141,6 +157,10 @@ interface CakePotInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "maxRCounts", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "maxSRCounts",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "maxSSRCounts",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "nRewards", data: BytesLike): Result;
@@ -163,6 +183,10 @@ interface CakePotInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "totalAmounts",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "totalWeights",
     data: BytesLike
   ): Result;
@@ -174,10 +198,18 @@ interface CakePotInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "weights", data: BytesLike): Result;
 
   events: {
+    "End(uint256)": EventFragment;
+    "Enter(uint256,address,uint256)": EventFragment;
+    "Exit(uint256,address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "Start(uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "End"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Enter"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Exit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Start"): EventFragment;
 }
 
 export class CakePot extends Contract {
@@ -205,6 +237,10 @@ export class CakePot extends Contract {
       arg1: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    checkEnd(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "checkEnd()"(overrides?: CallOverrides): Promise<[boolean]>;
 
     currentSeason(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -262,6 +298,16 @@ export class CakePot extends Contract {
     ): Promise<[BigNumber]>;
 
     "maxSRCounts(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    maxSSRCounts(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "maxSSRCounts(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -359,16 +405,31 @@ export class CakePot extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    ssrs(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
-
-    "ssrs(uint256)"(
+    ssrs(
       arg0: BigNumberish,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    "ssrs(uint256,uint256)"(
+      arg0: BigNumberish,
+      arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     startSeasonBlock(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "startSeasonBlock()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    totalAmounts(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "totalAmounts(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     totalWeights(
       arg0: BigNumberish,
@@ -425,6 +486,10 @@ export class CakePot extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  checkEnd(overrides?: CallOverrides): Promise<boolean>;
+
+  "checkEnd()"(overrides?: CallOverrides): Promise<boolean>;
+
   currentSeason(overrides?: CallOverrides): Promise<BigNumber>;
 
   "currentSeason()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -478,6 +543,16 @@ export class CakePot extends Contract {
   ): Promise<BigNumber>;
 
   "maxSRCounts(uint256)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  maxSSRCounts(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "maxSSRCounts(uint256)"(
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -563,16 +638,31 @@ export class CakePot extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  ssrs(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-  "ssrs(uint256)"(
+  ssrs(
     arg0: BigNumberish,
+    arg1: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  "ssrs(uint256,uint256)"(
+    arg0: BigNumberish,
+    arg1: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
   startSeasonBlock(overrides?: CallOverrides): Promise<BigNumber>;
 
   "startSeasonBlock()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  totalAmounts(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "totalAmounts(uint256)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   totalWeights(
     arg0: BigNumberish,
@@ -626,6 +716,10 @@ export class CakePot extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    checkEnd(overrides?: CallOverrides): Promise<boolean>;
+
+    "checkEnd()"(overrides?: CallOverrides): Promise<boolean>;
+
     currentSeason(overrides?: CallOverrides): Promise<BigNumber>;
 
     "currentSeason()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -676,6 +770,16 @@ export class CakePot extends Contract {
     ): Promise<BigNumber>;
 
     "maxSRCounts(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    maxSSRCounts(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "maxSSRCounts(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -761,16 +865,31 @@ export class CakePot extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    ssrs(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-    "ssrs(uint256)"(
+    ssrs(
       arg0: BigNumberish,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    "ssrs(uint256,uint256)"(
+      arg0: BigNumberish,
+      arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
     startSeasonBlock(overrides?: CallOverrides): Promise<BigNumber>;
 
     "startSeasonBlock()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    totalAmounts(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "totalAmounts(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     totalWeights(
       arg0: BigNumberish,
@@ -816,10 +935,26 @@ export class CakePot extends Contract {
   };
 
   filters: {
+    End(season: BigNumberish | null): EventFilter;
+
+    Enter(
+      season: BigNumberish | null,
+      who: string | null,
+      amount: null
+    ): EventFilter;
+
+    Exit(
+      season: BigNumberish | null,
+      who: string | null,
+      amount: null
+    ): EventFilter;
+
     OwnershipTransferred(
       previousOwner: string | null,
       newOwner: string | null
     ): EventFilter;
+
+    Start(season: BigNumberish | null): EventFilter;
   };
 
   estimateGas: {
@@ -834,6 +969,10 @@ export class CakePot extends Contract {
       arg1: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    checkEnd(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "checkEnd()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     currentSeason(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -885,6 +1024,16 @@ export class CakePot extends Contract {
     ): Promise<BigNumber>;
 
     "maxSRCounts(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    maxSSRCounts(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "maxSSRCounts(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -970,16 +1119,31 @@ export class CakePot extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    ssrs(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
-    "ssrs(uint256)"(
+    ssrs(
       arg0: BigNumberish,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "ssrs(uint256,uint256)"(
+      arg0: BigNumberish,
+      arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     startSeasonBlock(overrides?: CallOverrides): Promise<BigNumber>;
 
     "startSeasonBlock()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    totalAmounts(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "totalAmounts(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     totalWeights(
       arg0: BigNumberish,
@@ -1037,6 +1201,10 @@ export class CakePot extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    checkEnd(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "checkEnd()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     currentSeason(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "currentSeason()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1093,6 +1261,16 @@ export class CakePot extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "maxSRCounts(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    maxSSRCounts(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "maxSSRCounts(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1192,17 +1370,29 @@ export class CakePot extends Contract {
 
     ssrs(
       arg0: BigNumberish,
+      arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "ssrs(uint256)"(
+    "ssrs(uint256,uint256)"(
       arg0: BigNumberish,
+      arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     startSeasonBlock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "startSeasonBlock()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    totalAmounts(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "totalAmounts(uint256)"(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -2,6 +2,7 @@ declare const _default: {
     chainId: number;
     rpc: string;
     contracts: {
+        Cake: string;
         CakePot: string;
     };
 };
