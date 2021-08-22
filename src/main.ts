@@ -2,7 +2,7 @@ import { BodyNode, el } from "@hanul/skynode";
 import { utils } from "ethers";
 import CakeContract from "./contracts/CakeContract";
 import CakePotContract from "./contracts/CakePotContract";
-import Wallet from "./ethereum/Wallet";
+import Wallet from "./bsc/Wallet";
 
 (async () => {
 

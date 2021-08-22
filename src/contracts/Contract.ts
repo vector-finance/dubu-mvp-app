@@ -1,8 +1,8 @@
 import { ContractInterface, ethers } from "ethers";
 import EventContainer from "eventcontainer";
 import Config from "../Config";
-import NetworkProvider from "../ethereum/NetworkProvider";
-import Wallet from "../ethereum/Wallet";
+import NetworkProvider from "../bsc/NetworkProvider";
+import Wallet from "../bsc/Wallet";
 
 export default abstract class Contract<CT extends ethers.Contract> extends EventContainer {
 
